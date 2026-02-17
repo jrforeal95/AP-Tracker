@@ -38,7 +38,7 @@ export const CoverPage = forwardRef<HTMLDivElement, CoverProps>(({ language, tot
     <div style={{ fontSize: 64, marginBottom: 32 }}>🧧</div>
     <div style={{ fontSize: 16, color: WHITE_60, fontWeight: 600, textTransform: 'uppercase',
       letterSpacing: '0.25em', marginBottom: 12 }}>
-      CNY 2025
+      CNY 2026
     </div>
     <div style={{ fontSize: 36, color: GOLD, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 48, textAlign: 'center' }}>
       {language === 'zh' ? '恭喜发财' : 'Gong Xi Fa Cai'}
@@ -316,7 +316,7 @@ export const ClosingPage = forwardRef<HTMLDivElement, ClosingProps>(({ language,
     </div>
 
     <div style={{ fontSize: 13, color: WHITE_30, fontWeight: 500, letterSpacing: '0.08em' }}>
-      🧧 Angpao Tracker · CNY 2025
+      🧧 Angpao Tracker · CNY 2026
     </div>
   </div>
 ))

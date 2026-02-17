@@ -134,7 +134,7 @@ export default function MorePage({
         {/* App Info */}
         <div className="text-center pt-6">
           <p className="text-[11px] text-content-tertiary/50 font-medium">Angpao Tracker v1.0</p>
-          <p className="text-[11px] text-content-tertiary/50 mt-0.5">CNY 2025</p>
+          <p className="text-[11px] text-content-tertiary/50 mt-0.5">CNY 2026</p>
         </div>
 
         {/* Toast */}

@@ -128,7 +128,7 @@ export default function RecapScreen({
       try {
         await navigator.share({
           files: [file],
-          title: language === 'en' ? 'My CNY 2025 Angpao Recap' : '我的 2025 新年红包回顾',
+          title: language === 'en' ? 'My CNY 2026 Angpao Recap' : '我的 2026 新年红包回顾',
         })
         return
       } catch { /* cancelled */ }
