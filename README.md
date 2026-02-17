@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# Angpao Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first PWA for tracking your Chinese New Year red packet (angpao) collection. Photograph unopened angpao, log amounts as you open them, and view a beautiful year-end recap of your CNY haul.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Track & Log**
+- Record angpao with amount, giver name, category, and generation (chor)
+- Quick-add amount presets or custom input
+- Smart contact suggestions from past entries
 
-## React Compiler
+**Angpao Queue**
+- Photograph unopened angpao before opening them
+- Tag each with the giver's name
+- Review the queue later — open each one, enter the amount, and it gets added to your tracker
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Dashboard & Stats**
+- Total collection amount with daily trend chart
+- Top givers ranking with tier badges
+- Category and generation breakdowns
+- Daily average and projection stats
 
-## Expanding the ESLint configuration
+**Year Recap**
+- Instagram Stories-style recap with 6 themed pages
+- Tap to navigate through your stats, top givers, categories, and biggest angpao
+- Save each page as a shareable image (1080x1920)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Extras**
+- Bilingual: English and Chinese
+- Offline-capable PWA — installable on mobile home screen
+- Export/import data as JSON backup
+- All data stored locally — no account needed, no server
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React 19 + TypeScript
+- Vite + Tailwind CSS v4
+- Chart.js + react-chartjs-2
+- vite-plugin-pwa (Workbox)
+- html2canvas (code-split)
+- LocalStorage persistence
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:5173](http://localhost:5173) on your phone or browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Build
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+Output goes to `dist/` — deploy to Vercel, Netlify, or any static host.
+
+## License
+
+MIT
