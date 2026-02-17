@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626"/>
+      <stop offset="100%" style="stop-color:#991B1B"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B"/>
+      <stop offset="50%" style="stop-color:#FBBF24"/>
+      <stop offset="100%" style="stop-color:#D97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="40" fill="url(#bg)"/>
+  <rect x="36" y="72" width="120" height="36" fill="url(#gold)" opacity="0.85" rx="4"/>
+  <circle cx="96" cy="90" r="24" fill="url(#gold)"/>
+  <text x="96" y="98" text-anchor="middle" font-size="28" font-weight="bold" fill="#991B1B" font-family="serif">福</text>
+  <path d="M76 30 Q96 55 116 30" fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.6"/>
+</svg>

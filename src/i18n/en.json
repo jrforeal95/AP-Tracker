@@ -1,0 +1,81 @@
+{
+  "appName": "Angpao Tracker",
+  "appNameSub": "CNY 2025",
+  "tabs": {
+    "dashboard": "Home",
+    "add": "Add",
+    "chart": "Chart",
+    "rankings": "Rankings",
+    "more": "More"
+  },
+  "dashboard": {
+    "totalCollected": "Total Collected",
+    "todayStats": "Today",
+    "todayCount": "{count} angpao",
+    "recentEntries": "Recent",
+    "noEntries": "No angpao yet",
+    "noEntriesHint": "Gong Xi Fa Cai! Start tracking your blessings",
+    "projection": "Projected by Chor 15",
+    "dailyAvg": "Daily Average",
+    "viewAll": "View All"
+  },
+  "add": {
+    "title": "Record Angpao",
+    "amount": "Amount",
+    "custom": "Custom",
+    "from": "From",
+    "fromPlaceholder": "e.g. Uncle Tan, Grandma",
+    "category": "Category",
+    "chor": "Chor",
+    "save": "Save Angpao",
+    "saved": "Saved!",
+    "recentContacts": "Recent"
+  },
+  "chart": {
+    "title": "Angpao Journey",
+    "cumulative": "Cumulative Total",
+    "projection": "Projection",
+    "dailyAvg": "Daily Avg",
+    "noData": "Add some angpao to see your chart!"
+  },
+  "rankings": {
+    "title": "Top Givers",
+    "biggestSingle": "Biggest Single Angpao",
+    "categoryBreakdown": "Category Breakdown",
+    "fullList": "All Givers",
+    "count": "{count} angpao",
+    "noData": "Add angpao to see rankings!"
+  },
+  "categories": {
+    "father": "Father's Side",
+    "mother": "Mother's Side",
+    "friends": "Friends",
+    "others": "Others"
+  },
+  "chor": {
+    "1": "Chor 1", "2": "Chor 2", "3": "Chor 3", "4": "Chor 4", "5": "Chor 5",
+    "6": "Chor 6", "7": "Chor 7", "8": "Chor 8", "9": "Chor 9", "10": "Chor 10",
+    "11": "Chor 11", "12": "Chor 12", "13": "Chor 13", "14": "Chor 14", "15": "Chor 15"
+  },
+  "export": {
+    "export": "Export Data",
+    "import": "Import Data",
+    "exportSuccess": "Data exported!",
+    "importSuccess": "Data imported!"
+  },
+  "more": {
+    "title": "More",
+    "exportDesc": "Save your data as a backup file",
+    "importDesc": "Restore from a backup file",
+    "recap": "Year Recap",
+    "recapDesc": "See your CNY angpao highlights",
+    "comingSoon": "Coming Soon"
+  },
+  "common": {
+    "total": "Total",
+    "entries": "entries",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}

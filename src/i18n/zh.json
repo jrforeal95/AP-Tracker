@@ -1,0 +1,81 @@
+{
+  "appName": "红包记录",
+  "appNameSub": "新年 2025",
+  "tabs": {
+    "dashboard": "主页",
+    "add": "记录",
+    "chart": "图表",
+    "rankings": "排名",
+    "more": "更多"
+  },
+  "dashboard": {
+    "totalCollected": "总收入",
+    "todayStats": "今天",
+    "todayCount": "{count} 个红包",
+    "recentEntries": "最近",
+    "noEntries": "还没有红包",
+    "noEntriesHint": "恭喜发财！开始记录你的红包吧",
+    "projection": "预计到初十五",
+    "dailyAvg": "日均收入",
+    "viewAll": "查看全部"
+  },
+  "add": {
+    "title": "记录红包",
+    "amount": "金额",
+    "custom": "自定义",
+    "from": "来自",
+    "fromPlaceholder": "如：陈叔叔、奶奶",
+    "category": "类别",
+    "chor": "初",
+    "save": "保存红包",
+    "saved": "已保存！",
+    "recentContacts": "最近"
+  },
+  "chart": {
+    "title": "红包之旅",
+    "cumulative": "累计总额",
+    "projection": "预计",
+    "dailyAvg": "日均",
+    "noData": "添加红包后即可查看图表！"
+  },
+  "rankings": {
+    "title": "最佳红包",
+    "biggestSingle": "最大单笔红包",
+    "categoryBreakdown": "类别分布",
+    "fullList": "所有来源",
+    "count": "{count} 个红包",
+    "noData": "添加红包以查看排名！"
+  },
+  "categories": {
+    "father": "父方",
+    "mother": "母方",
+    "friends": "朋友",
+    "others": "其他"
+  },
+  "chor": {
+    "1": "初一", "2": "初二", "3": "初三", "4": "初四", "5": "初五",
+    "6": "初六", "7": "初七", "8": "初八", "9": "初九", "10": "初十",
+    "11": "十一", "12": "十二", "13": "十三", "14": "十四", "15": "十五"
+  },
+  "export": {
+    "export": "导出数据",
+    "import": "导入数据",
+    "exportSuccess": "数据已导出！",
+    "importSuccess": "数据已导入！"
+  },
+  "more": {
+    "title": "更多",
+    "exportDesc": "将数据保存为备份文件",
+    "importDesc": "从备份文件恢复数据",
+    "recap": "年度回顾",
+    "recapDesc": "查看你的新年红包亮点",
+    "comingSoon": "即将推出"
+  },
+  "common": {
+    "total": "总计",
+    "entries": "条记录",
+    "delete": "删除",
+    "cancel": "取消",
+    "confirm": "确认"
+  }
+}

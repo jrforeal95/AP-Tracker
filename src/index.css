@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cny-red: #B91C1C;
+  --color-cny-red-light: #DC2626;
+  --color-cny-red-dark: #7F1D1D;
+  --color-cny-red-50: #FEF2F2;
+  --color-cny-gold: #D97706;
+  --color-cny-gold-light: #F59E0B;
+  --color-cny-gold-bright: #FBBF24;
+  --color-cny-gold-50: #FFFBEB;
+  --color-cny-cream: #FFFFFF;
+  --color-cny-warm: #FEF3C7;
+  --color-border: rgba(14, 15, 12, 0.12);
+  --color-content-primary: #0E0F0C;
+  --color-content-secondary: #454745;
+  --color-content-tertiary: #6A6C6A;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-family: var(--font-body);
+  background-color: #FFFFFF;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: #FFFFFF;
+  overscroll-behavior: none;
+  letter-spacing: -0.01em;
+}
+
+/* Wise-style animation: gentle, functional */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up { animation: slideUp 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+.animate-scale-in { animation: fadeIn 0.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+.animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+.animate-pop-in { animation: fadeIn 0.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+.animate-success { background-color: #2F5711 !important; }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(14, 15, 12, 0.08); border-radius: 2px; }
+
+.pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
