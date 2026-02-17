@@ -61,8 +61,82 @@ const PINYIN_MAP: Record<string, string> = {
   '玄孙': 'xuánsūn', '玄孙女': 'xuánsūnnǚ',
 }
 
+// Character-level pinyin for building pronunciation of ANY compound kinship term.
+// When a term isn't in PINYIN_MAP above, we construct pinyin character-by-character.
+const CHAR_PINYIN: Record<string, string> = {
+  // Core family
+  '父': 'fù', '母': 'mǔ', '兄': 'xiōng', '弟': 'dì', '姐': 'jiě', '妹': 'mèi',
+  '子': 'zǐ', '女': 'nǚ', '夫': 'fū', '妻': 'qī', '儿': 'ér', '男': 'nán',
+  // Informal parents
+  '爸': 'bà', '妈': 'mā', '爹': 'diē', '娘': 'niáng',
+  // Grandparents & in-laws
+  '爷': 'yé', '奶': 'nǎi', '公': 'gōng', '婆': 'pó', '翁': 'wēng',
+  '姥': 'lǎo', '岳': 'yuè', '丈': 'zhàng',
+  // Aunts & uncles
+  '姑': 'gū', '舅': 'jiù', '叔': 'shū', '伯': 'bó', '姨': 'yí',
+  // Spouses & in-laws
+  '嫂': 'sǎo', '婿': 'xù', '媳': 'xí', '妇': 'fù', '婶': 'shěn',
+  '妗': 'jìn', '壻': 'xù',
+  // Niece/nephew/cousin modifiers
+  '侄': 'zhí', '甥': 'shēng', '堂': 'táng', '表': 'biǎo',
+  // Generational prefixes
+  '孙': 'sūn', '曾': 'zēng', '玄': 'xuán', '太': 'tài', '外': 'wài',
+  '高': 'gāo', '祖': 'zǔ', '重': 'chóng', '元': 'yuán',
+  // Kinship system
+  '亲': 'qīn', '家': 'jiā', '姻': 'yīn', '眷': 'juàn', '妯': 'zhóu',
+  '娌': 'lǐ', '连': 'lián', '襟': 'jīn', '配': 'pèi', '偶': 'ǒu',
+  // Size/order modifiers
+  '大': 'dà', '小': 'xiǎo', '老': 'lǎo', '长': 'zhǎng', '幼': 'yòu',
+  '少': 'shào', '仲': 'zhòng', '季': 'jì',
+  // Extended/remote kinship
+  '从': 'cóng', '族': 'zú', '远': 'yuǎn', '再': 'zài', '世': 'shì',
+  '房': 'fáng', '门': 'mén', '胞': 'bāo', '同': 'tóng', '嗣': 'sì',
+  '嫡': 'dí', '内': 'nèi',
+  // Alternate/dialectal
+  '哥': 'gē', '姆': 'mǔ', '阿': 'ā', '仔': 'zǎi', '崽': 'zǎi',
+  '伢': 'yá', '囝': 'jiǎn', '囡': 'nān', '娃': 'wá', '嗲': 'diā',
+  '嘎': 'gā', '嬷': 'mó', '嫲': 'mā', '嬢': 'niáng', '娭': 'āi',
+  '毑': 'jiě', '娣': 'dì', '姒': 'sì', '娅': 'yà',
+  '姊': 'zǐ', '媪': 'ǎo', '嫜': 'zhāng', '乸': 'nǎ',
+  // People/person words
+  '人': 'rén', '郎': 'láng', '息': 'xī', '官': 'guān', '客': 'kè',
+  // Descriptor characters
+  '新': 'xīn', '先': 'xiān', '半': 'bàn', '干': 'gān', '恩': 'ēn',
+  '乖': 'guāi', '好': 'hǎo', '贤': 'xián', '爱': 'ài',
+  '良': 'liáng', '慈': 'cí',
+  // Structural/misc
+  '辈': 'bèi', '自': 'zì', '己': 'jǐ', '的': 'de',
+  '闺': 'guī', '宝': 'bǎo', '贝': 'bèi', '膀': 'bǎng',
+  // Numbers (for birth order terms)
+  '一': 'yī', '二': 'èr', '三': 'sān', '四': 'sì', '五': 'wǔ',
+  '六': 'liù', '七': 'qī', '八': 'bā', '九': 'jiǔ', '十': 'shí',
+  // Generational depth
+  '天': 'tiān', '烈': 'liè', '鼻': 'bí', '开': 'kāi', '始': 'shǐ',
+  '来': 'lái', '耳': 'ěr', '仍': 'réng', '云': 'yún',
+  '晜': 'kūn', '胎': 'tāi', '承': 'chéng', '礽': 'réng', '裔': 'yì',
+  // Misc coverage
+  '几': 'jǐ', '依': 'yī', '佬': 'lǎo', '细': 'xì', '孩': 'hái',
+  '尕': 'gǎ', '幺': 'yāo', '桥': 'qiáo', '亚': 'yà',
+  '伴': 'bàn', '挑': 'tiāo', '倌': 'guān', '晚': 'wǎn', '汉': 'hàn',
+  '头': 'tóu', '担': 'dān', '生': 'shēng', '口': 'kǒu',
+  '泰': 'tài', '次': 'cì', '地': 'dì', '比': 'bǐ',
+  '山': 'shān', '水': 'shuǐ', '发': 'fā', '友': 'yǒu',
+  '金': 'jīn', '上': 'shàng', '后': 'hòu', '末': 'mò',
+  '丫': 'yā', '满': 'mǎn', '尾': 'wěi', '我': 'wǒ',
+  '们': 'men', '之': 'zhī', '吾': 'wú',
+}
+
 function getPinyin(term: string): string | null {
-  return PINYIN_MAP[term] ?? null
+  // Tier 1: exact whole-term match (handles natural pinyin like 爸爸→bàba)
+  if (PINYIN_MAP[term]) return PINYIN_MAP[term]
+  // Tier 2: build pinyin character-by-character
+  const parts: string[] = []
+  for (const ch of term) {
+    const py = CHAR_PINYIN[ch]
+    if (!py) return null // unknown character → give up
+    parts.push(py)
+  }
+  return parts.length > 0 ? parts.join(' ') : null
 }
 
 export default function RelativesCalculator({ onClose }: RelativesCalculatorProps) {
