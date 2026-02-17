@@ -15,6 +15,11 @@
     "recentEntries": "Recent",
     "noEntries": "No angpao yet",
     "noEntriesHint": "Gong Xi Fa Cai! Start tracking your blessings",
+    "searchPlaceholder": "Search by name...",
+    "editEntry": "Edit",
+    "emptyTip1": "Tap + to record your first angpao",
+    "emptyTip2": "Use 'Save for Later' to photo unopened ones",
+    "emptyTip3": "View trends in Chart & Rankings tabs",
     "projection": "Projected by Chor 15",
     "dailyAvg": "Daily Average",
     "viewAll": "View All"
@@ -29,6 +34,10 @@
     "chor": "Chor",
     "save": "Save Angpao",
     "saved": "Saved!",
+    "update": "Update Angpao",
+    "updated": "Updated!",
+    "note": "Note",
+    "notePlaceholder": "Optional note...",
     "recentContacts": "Recent"
   },
   "chart": {
@@ -61,7 +70,11 @@
     "export": "Export Data",
     "import": "Import Data",
     "exportSuccess": "Data exported!",
-    "importSuccess": "Data imported!"
+    "importSuccess": "Data imported!",
+    "importConfirmTitle": "Import Data",
+    "importConfirmBody": "Replace {existing} entries with {incoming} entries from backup?",
+    "importCancel": "Cancel",
+    "importConfirm": "Replace Data"
   },
   "more": {
     "title": "More",
@@ -69,7 +82,12 @@
     "importDesc": "Restore from a backup file",
     "recap": "Year Recap",
     "recapDesc": "See your CNY angpao highlights",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "darkMode": "Dark Mode",
+    "darkModeDesc": "Switch between light and dark themes",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
   },
   "common": {
     "total": "Total",

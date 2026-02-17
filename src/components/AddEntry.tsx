@@ -1,26 +1,46 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { PRESET_AMOUNTS, CATEGORIES } from '../constants'
 import { getTodayChor, getAllChors } from '../utils/chor'
-import type { Category, TabId } from '../types'
+import { haptic } from '../utils/haptic'
+import type { AngpaoEntry, Category, TabId } from '../types'
 
 interface AddEntryProps {
   recentContacts: string[]
-  onSave: (amount: number, from: string, category: Category, chor?: number) => void
+  onSave: (amount: number, from: string, category: Category, chor?: number, note?: string) => void
+  onUpdate?: (id: string, updates: Partial<Pick<AngpaoEntry, 'amount' | 'from' | 'category' | 'chor' | 'note'>>) => void
+  editingEntry?: AngpaoEntry | null
+  onCancelEdit?: () => void
   onNavigate: (tab: TabId) => void
 }
 
-export default function AddEntry({ recentContacts, onSave, onNavigate }: AddEntryProps) {
+export default function AddEntry({ recentContacts, onSave, onUpdate, editingEntry, onCancelEdit, onNavigate }: AddEntryProps) {
   const { t, language } = useLanguage()
-  const [amount, setAmount] = useState<number | ''>('')
-  const [selectedPreset, setSelectedPreset] = useState<number | null>(null)
-  const [from, setFrom] = useState('')
-  const [category, setCategory] = useState<Category>('father')
-  const [chor, setChor] = useState(getTodayChor() ?? 1)
+  const isEditing = !!editingEntry
+  const [amount, setAmount] = useState<number | ''>(editingEntry?.amount ?? '')
+  const [selectedPreset, setSelectedPreset] = useState<number | null>(
+    editingEntry ? (PRESET_AMOUNTS.includes(editingEntry.amount) ? editingEntry.amount : null) : null
+  )
+  const [from, setFrom] = useState(editingEntry?.from ?? '')
+  const [category, setCategory] = useState<Category>(editingEntry?.category ?? 'father')
+  const [chor, setChor] = useState(editingEntry?.chor ?? getTodayChor() ?? 1)
+  const [note, setNote] = useState(editingEntry?.note ?? '')
   const [showAutocomplete, setShowAutocomplete] = useState(false)
   const [saved, setSaved] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const fromRef = useRef<HTMLInputElement>(null)
+
+  // When editingEntry changes, reset form
+  useEffect(() => {
+    if (editingEntry) {
+      setAmount(editingEntry.amount)
+      setSelectedPreset(PRESET_AMOUNTS.includes(editingEntry.amount) ? editingEntry.amount : null)
+      setFrom(editingEntry.from)
+      setCategory(editingEntry.category)
+      setChor(editingEntry.chor)
+      setNote(editingEntry.note ?? '')
+    }
+  }, [editingEntry])
 
   const filteredContacts = from.length > 0
     ? recentContacts.filter(c => c.toLowerCase().includes(from.toLowerCase()))
@@ -42,7 +62,18 @@ export default function AddEntry({ recentContacts, onSave, onNavigate }: AddEntr
     const finalAmount = typeof amount === 'number' ? amount : 0
     if (finalAmount <= 0 || !from.trim()) return
 
-    onSave(finalAmount, from, category, chor)
+    haptic()
+    if (isEditing && onUpdate && editingEntry) {
+      onUpdate(editingEntry.id, {
+        amount: finalAmount,
+        from,
+        category,
+        chor,
+        note: note.trim() || undefined,
+      })
+    } else {
+      onSave(finalAmount, from, category, chor, note.trim() || undefined)
+    }
     setSaved(true)
 
     setTimeout(() => {
@@ -50,6 +81,10 @@ export default function AddEntry({ recentContacts, onSave, onNavigate }: AddEntr
       setAmount('')
       setSelectedPreset(null)
       setFrom('')
+      setNote('')
+      if (isEditing && onCancelEdit) {
+        onCancelEdit()
+      }
       onNavigate('dashboard')
     }, 800)
   }
@@ -215,20 +250,50 @@ export default function AddEntry({ recentContacts, onSave, onNavigate }: AddEntr
         </div>
       </div>
 
-      {/* Save Button */}
-      <button
-        onClick={handleSave}
-        disabled={!canSave}
-        className={`w-full py-4 rounded-2xl text-[16px] font-semibold transition-all duration-200 ${
-          saved
-            ? 'bg-[#2F5711] text-white'
-            : canSave
-              ? 'bg-cny-red text-white active:scale-[0.98] shadow-sm'
-              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-        }`}
-      >
-        {saved ? '✓ ' + t('add.saved') : t('add.save')}
-      </button>
+      {/* Note Field */}
+      <div>
+        <label className="text-[11px] font-semibold text-content-tertiary uppercase tracking-widest mb-4 block">
+          {t('add.note')}
+        </label>
+        <input
+          type="text"
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          placeholder={t('add.notePlaceholder')}
+          className="w-full px-5 py-4 bg-white rounded-2xl border border-border text-[15px] font-medium
+                     text-content-primary placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-cny-red/15
+                     focus:border-cny-red/30 transition-all"
+        />
+      </div>
+
+      {/* Save / Update Button */}
+      <div className="flex gap-3">
+        {isEditing && onCancelEdit && (
+          <button
+            onClick={onCancelEdit}
+            className="flex-1 py-4 rounded-2xl text-[16px] font-semibold border border-border text-content-secondary
+                       active:bg-gray-50 transition-all duration-200"
+          >
+            {t('common.cancel')}
+          </button>
+        )}
+        <button
+          onClick={handleSave}
+          disabled={!canSave}
+          className={`flex-1 py-4 rounded-2xl text-[16px] font-semibold transition-all duration-200 ${
+            saved
+              ? 'bg-[#2F5711] text-white'
+              : canSave
+                ? 'bg-cny-red text-white active:scale-[0.98] shadow-sm'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+          }`}
+        >
+          {saved
+            ? '✓ ' + (isEditing ? t('add.updated') : t('add.saved'))
+            : isEditing ? t('add.update') : t('add.save')
+          }
+        </button>
+      </div>
     </div>
   )
 }

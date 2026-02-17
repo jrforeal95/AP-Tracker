@@ -15,6 +15,11 @@
     "recentEntries": "最近",
     "noEntries": "还没有红包",
     "noEntriesHint": "恭喜发财！开始记录你的红包吧",
+    "searchPlaceholder": "搜索来源...",
+    "editEntry": "编辑",
+    "emptyTip1": "点击 + 记录你的第一个红包",
+    "emptyTip2": "用「稍后打开」先拍照记录",
+    "emptyTip3": "在图表和排名查看趋势",
     "projection": "预计到初十五",
     "dailyAvg": "日均收入",
     "viewAll": "查看全部"
@@ -29,6 +34,10 @@
     "chor": "初",
     "save": "保存红包",
     "saved": "已保存！",
+    "update": "更新红包",
+    "updated": "已更新！",
+    "note": "备注",
+    "notePlaceholder": "可选备注...",
     "recentContacts": "最近"
   },
   "chart": {
@@ -61,7 +70,11 @@
     "export": "导出数据",
     "import": "导入数据",
     "exportSuccess": "数据已导出！",
-    "importSuccess": "数据已导入！"
+    "importSuccess": "数据已导入！",
+    "importConfirmTitle": "导入数据",
+    "importConfirmBody": "用备份中的 {incoming} 条记录替换现有的 {existing} 条记录？",
+    "importCancel": "取消",
+    "importConfirm": "替换数据"
   },
   "more": {
     "title": "更多",
@@ -69,7 +82,12 @@
     "importDesc": "从备份文件恢复数据",
     "recap": "年度回顾",
     "recapDesc": "查看你的新年红包亮点",
-    "comingSoon": "即将推出"
+    "comingSoon": "即将推出",
+    "darkMode": "深色模式",
+    "darkModeDesc": "切换浅色和深色主题",
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色"
   },
   "common": {
     "total": "总计",

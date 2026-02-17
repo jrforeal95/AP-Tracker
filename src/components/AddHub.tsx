@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
+import { haptic } from '../utils/haptic'
 import AddEntry from './AddEntry'
 import SaveForLater from './SaveForLater'
 import ReviewQueue from './ReviewQueue'
-import type { Category, QueuedAngpao, TabId } from '../types'
+import type { AngpaoEntry, Category, QueuedAngpao, TabId } from '../types'
 
 type HubMode = 'hub' | 'record' | 'save' | 'review'
 
 interface AddHubProps {
   recentContacts: string[]
   queuedItems: QueuedAngpao[]
-  onSave: (amount: number, from: string, category: Category, chor?: number) => void
+  onSave: (amount: number, from: string, category: Category, chor?: number, note?: string) => void
+  onUpdate?: (id: string, updates: Partial<Pick<AngpaoEntry, 'amount' | 'from' | 'category' | 'chor' | 'note'>>) => void
+  editingEntry?: AngpaoEntry | null
+  onCancelEdit?: () => void
   onAddToQueue: (photo: string, from: string) => void
   onRemoveFromQueue: (id: string) => void
   onNavigate: (tab: TabId) => void
@@ -20,6 +24,9 @@ export default function AddHub({
   recentContacts,
   queuedItems,
   onSave,
+  onUpdate,
+  editingEntry,
+  onCancelEdit,
   onAddToQueue,
   onRemoveFromQueue,
   onNavigate,
@@ -28,6 +35,13 @@ export default function AddHub({
   const [mode, setMode] = useState<HubMode>('hub')
   const [reviewItem, setReviewItem] = useState<QueuedAngpao | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+
+  // Auto-switch to record mode when editing
+  useEffect(() => {
+    if (editingEntry) {
+      setMode('record')
+    }
+  }, [editingEntry])
 
   const handleReview = (item: QueuedAngpao) => {
     setReviewItem(item)
@@ -57,6 +71,12 @@ export default function AddHub({
         <AddEntry
           recentContacts={recentContacts}
           onSave={onSave}
+          onUpdate={onUpdate}
+          editingEntry={editingEntry}
+          onCancelEdit={() => {
+            if (onCancelEdit) onCancelEdit()
+            handleBack()
+          }}
           onNavigate={onNavigate}
         />
       </div>
@@ -122,6 +142,7 @@ export default function AddHub({
                   <div className="absolute -top-1.5 -right-1.5 flex gap-1 z-10">
                     <button
                       onClick={() => {
+                        haptic()
                         onRemoveFromQueue(item.id)
                         setConfirmDeleteId(null)
                       }}

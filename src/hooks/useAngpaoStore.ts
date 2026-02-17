@@ -9,7 +9,7 @@ export function useAngpaoStore() {
   const [entries, setEntries] = useLocalStorage<AngpaoEntry[]>(STORAGE_KEYS.entries, [])
   const [queuedItems, setQueuedItems] = useLocalStorage<QueuedAngpao[]>(STORAGE_KEYS.queue, [])
 
-  const addEntry = useCallback((amount: number, from: string, category: Category, chor?: number) => {
+  const addEntry = useCallback((amount: number, from: string, category: Category, chor?: number, note?: string) => {
     const now = new Date()
     const date = formatDate(now)
     const entry: AngpaoEntry = {
@@ -20,9 +20,24 @@ export function useAngpaoStore() {
       chor: chor ?? getChorFromDate(now) ?? 1,
       date,
       createdAt: Date.now(),
+      ...(note?.trim() ? { note: note.trim() } : {}),
     }
     setEntries(prev => [entry, ...prev])
     return entry
+  }, [setEntries])
+
+  const editEntry = useCallback((id: string, updates: Partial<Pick<AngpaoEntry, 'amount' | 'from' | 'category' | 'chor' | 'note'>>) => {
+    setEntries(prev => prev.map(e => {
+      if (e.id !== id) return e
+      return {
+        ...e,
+        ...(updates.amount !== undefined ? { amount: updates.amount } : {}),
+        ...(updates.from !== undefined ? { from: updates.from.trim() } : {}),
+        ...(updates.category !== undefined ? { category: updates.category } : {}),
+        ...(updates.chor !== undefined ? { chor: updates.chor } : {}),
+        ...(updates.note !== undefined ? { note: updates.note.trim() || undefined } : {}),
+      }
+    }))
   }, [setEntries])
 
   const deleteEntry = useCallback((id: string) => {
@@ -61,6 +76,7 @@ export function useAngpaoStore() {
   return {
     entries,
     addEntry,
+    editEntry,
     deleteEntry,
     importEntries,
     queuedItems,

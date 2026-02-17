@@ -38,4 +38,5 @@ export const STORAGE_KEYS = {
   entries: 'angpao_entries',
   language: 'angpao_language',
   queue: 'angpao_queue',
+  darkMode: 'angpao_dark_mode',
 } as const

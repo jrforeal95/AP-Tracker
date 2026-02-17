@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
+import { haptic } from '../utils/haptic'
 import RecapScreen from './RecapScreen'
 import type { AngpaoEntry, RankingEntry, CategoryBreakdown } from '../types'
 
@@ -28,8 +29,10 @@ export default function MorePage({
   const fileRef = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [showRecap, setShowRecap] = useState(false)
+  const [importConfirm, setImportConfirm] = useState<AngpaoEntry[] | null>(null)
 
   const handleExport = () => {
+    haptic()
     const data = JSON.stringify(entries, null, 2)
     const blob = new Blob([data], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -51,9 +54,7 @@ export default function MorePage({
       try {
         const data = JSON.parse(ev.target?.result as string) as AngpaoEntry[]
         if (Array.isArray(data)) {
-          onImport(data)
-          setMessage(t('export.importSuccess'))
-          setTimeout(() => setMessage(null), 2000)
+          setImportConfirm(data)
         }
       } catch {
         setMessage('Invalid file format')
@@ -62,6 +63,16 @@ export default function MorePage({
     }
     reader.readAsText(file)
     if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const confirmImport = () => {
+    haptic()
+    if (importConfirm) {
+      onImport(importConfirm)
+      setImportConfirm(null)
+      setMessage(t('export.importSuccess'))
+      setTimeout(() => setMessage(null), 2000)
+    }
   }
 
   const giverCount = new Set(entries.map(e => e.from)).size
@@ -133,7 +144,7 @@ export default function MorePage({
 
         {/* App Info */}
         <div className="text-center pt-6">
-          <p className="text-[11px] text-content-tertiary/50 font-medium">Angpao Tracker v1.0</p>
+          <p className="text-[11px] text-content-tertiary/50 font-medium">Angpao Tracker v2.0</p>
           <p className="text-[11px] text-content-tertiary/50 mt-0.5">CNY 2026</p>
         </div>
 
@@ -145,6 +156,39 @@ export default function MorePage({
           </div>
         )}
       </div>
+
+      {/* Import Confirmation Modal */}
+      {importConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-8 animate-fade-in">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-[16px] font-semibold text-content-primary mb-2">
+              {t('export.importConfirmTitle')}
+            </h3>
+            <p className="text-[14px] text-content-secondary leading-relaxed mb-6">
+              {t('export.importConfirmBody', {
+                existing: entries.length,
+                incoming: importConfirm.length,
+              })}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setImportConfirm(null)}
+                className="flex-1 py-3 rounded-2xl text-[14px] font-medium text-content-secondary
+                           border border-border active:bg-gray-50 transition-colors"
+              >
+                {t('export.importCancel')}
+              </button>
+              <button
+                onClick={confirmImport}
+                className="flex-1 py-3 rounded-2xl text-[14px] font-semibold text-white
+                           bg-cny-red active:bg-red-800 transition-colors"
+              >
+                {t('export.importConfirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recap Full Screen Overlay */}
       {showRecap && (

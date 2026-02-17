@@ -6,14 +6,24 @@ import AddHub from './components/AddHub'
 import LineChartScreen from './components/LineChart'
 import Rankings from './components/Rankings'
 import MorePage from './components/MorePage'
-import type { TabId } from './types'
+import type { AngpaoEntry, TabId } from './types'
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('dashboard')
+  const [editingEntry, setEditingEntry] = useState<AngpaoEntry | null>(null)
   const store = useAngpaoStore()
 
   const handleNavigate = useCallback((tab: TabId) => {
     setActiveTab(tab)
+  }, [])
+
+  const handleEditEntry = useCallback((entry: AngpaoEntry) => {
+    setEditingEntry(entry)
+    setActiveTab('add')
+  }, [])
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingEntry(null)
   }, [])
 
   return (
@@ -27,6 +37,7 @@ export default function App() {
           projection={store.projection}
           onNavigate={handleNavigate}
           onDelete={store.deleteEntry}
+          onEdit={handleEditEntry}
         />
       )}
 
@@ -35,6 +46,9 @@ export default function App() {
           recentContacts={store.recentContacts}
           queuedItems={store.queuedItems}
           onSave={store.addEntry}
+          onUpdate={store.editEntry}
+          editingEntry={editingEntry}
+          onCancelEdit={handleCancelEdit}
           onAddToQueue={store.addToQueue}
           onRemoveFromQueue={store.removeFromQueue}
           onNavigate={handleNavigate}

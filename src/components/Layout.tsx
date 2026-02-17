@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import type { TabId } from '../types'
 import { useLanguage } from '../i18n/LanguageContext'
+import { haptic } from '../utils/haptic'
 
 interface LayoutProps {
   activeTab: TabId
@@ -106,7 +107,7 @@ export default function Layout({ activeTab, onTabChange, children }: LayoutProps
               return (
                 <button
                   key={item.id}
-                  onClick={() => onTabChange('add')}
+                  onClick={() => { haptic(); onTabChange('add') }}
                   className="relative -mt-6 flex items-center justify-center"
                 >
                   <div className={`w-[52px] h-[52px] rounded-2xl flex items-center justify-center
@@ -126,7 +127,7 @@ export default function Layout({ activeTab, onTabChange, children }: LayoutProps
             return (
               <button
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                onClick={() => { haptic(); onTabChange(item.id) }}
                 className="flex flex-col items-center gap-1 py-2 px-3 transition-colors duration-200"
               >
                 <div className={isActive ? 'text-white' : 'text-white/40'}>

@@ -6,6 +6,7 @@ export interface AngpaoEntry {
   chor: number
   date: string // ISO date string YYYY-MM-DD
   createdAt: number // timestamp
+  note?: string
 }
 
 export type Category = 'father' | 'mother' | 'friends' | 'others'
