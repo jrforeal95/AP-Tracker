@@ -89,6 +89,17 @@
     "light": "Light",
     "dark": "Dark"
   },
+  "relatives": {
+    "title": "Relatives Calculator",
+    "placeholder": "Tap buttons below to start…",
+    "selectRelation": "Select Relation",
+    "result": "Called",
+    "alsoKnown": "Also called: ",
+    "noResult": "No result yet, keep adding…",
+    "me": "Me",
+    "undo": "← Undo",
+    "reset": "Reset"
+  },
   "common": {
     "total": "Total",
     "entries": "entries",

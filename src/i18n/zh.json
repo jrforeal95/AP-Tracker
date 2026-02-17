@@ -89,6 +89,17 @@
     "light": "浅色",
     "dark": "深色"
   },
+  "relatives": {
+    "title": "亲戚关系计算器",
+    "placeholder": "点击下方按钮开始计算…",
+    "selectRelation": "选择关系",
+    "result": "称呼",
+    "alsoKnown": "也叫：",
+    "noResult": "暂无结果，继续添加关系…",
+    "me": "我",
+    "undo": "← 撤销",
+    "reset": "重置"
+  },
   "common": {
     "total": "总计",
     "entries": "条记录",

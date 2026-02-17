@@ -86,17 +86,29 @@ export default function RecapScreen({
     else goNext()
   }, [goNext, goPrev])
 
-  // Capture current page
+  // Capture current page — clone into off-screen container to avoid
+  // parent CSS transform (scale) distorting html2canvas output
   const captureCurrentPage = useCallback(async (): Promise<Blob | null> => {
     const el = cardRefs.current[currentPage]
     if (!el) return null
     setGenerating(true)
     try {
       const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(el, {
+
+      // Clone the card into an off-screen container at native 540x960
+      const clone = el.cloneNode(true) as HTMLDivElement
+      const offscreen = document.createElement('div')
+      offscreen.style.cssText = 'position:fixed;left:-9999px;top:0;width:540px;height:960px;overflow:hidden;z-index:-1;'
+      offscreen.appendChild(clone)
+      document.body.appendChild(offscreen)
+
+      const canvas = await html2canvas(clone, {
         scale: 2, useCORS: true, backgroundColor: null,
         width: 540, height: 960,
       })
+
+      document.body.removeChild(offscreen)
+
       return new Promise((resolve) => {
         canvas.toBlob((blob) => resolve(blob), 'image/png', 1)
       })
