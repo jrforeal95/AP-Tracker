@@ -41,10 +41,10 @@
     "recentContacts": "Recent"
   },
   "chart": {
-    "title": "Angpao Journey",
-    "cumulative": "Cumulative Total",
-    "projection": "Projection",
+    "title": "Daily Income",
+    "daily": "Daily Total",
     "dailyAvg": "Daily Avg",
+    "bestDay": "Best Day",
     "noData": "Add some angpao to see your chart!"
   },
   "rankings": {

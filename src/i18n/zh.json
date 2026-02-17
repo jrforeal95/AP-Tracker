@@ -41,10 +41,10 @@
     "recentContacts": "最近"
   },
   "chart": {
-    "title": "红包之旅",
-    "cumulative": "累计总额",
-    "projection": "预计",
+    "title": "每日收入",
+    "daily": "每日总额",
     "dailyAvg": "日均",
+    "bestDay": "最佳日",
     "noData": "添加红包后即可查看图表！"
   },
   "rankings": {

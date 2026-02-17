@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useCallback } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { CATEGORIES } from '../constants'
 import { getTodayChor } from '../utils/chor'
@@ -17,6 +17,158 @@ interface DashboardProps {
   onEdit: (entry: AngpaoEntry) => void
 }
 
+// --- Swipeable Row Component ---
+interface SwipeableRowProps {
+  children: React.ReactNode
+  onEdit: () => void
+  onDelete: () => void
+  isOpen: boolean
+  onOpen: () => void
+  onClose: () => void
+  confirmDelete: boolean
+  onConfirmDelete: () => void
+  onCancelConfirm: () => void
+  editLabel: string
+  deleteLabel: string
+  confirmLabel: string
+  cancelLabel: string
+}
+
+function SwipeableRow({
+  children, onEdit, onDelete, isOpen, onOpen, onClose,
+  confirmDelete, onConfirmDelete, onCancelConfirm,
+  editLabel, deleteLabel, confirmLabel, cancelLabel,
+}: SwipeableRowProps) {
+  const [offsetX, setOffsetX] = useState(0)
+  const [swiping, setSwiping] = useState(false)
+  const startRef = useRef({ x: 0, y: 0, time: 0 })
+  const directionLocked = useRef<'horizontal' | 'vertical' | null>(null)
+  const ACTION_WIDTH = 140
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    startRef.current = { x: touch.clientX, y: touch.clientY, time: Date.now() }
+    directionLocked.current = null
+    setSwiping(true)
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!swiping) return
+    const touch = e.touches[0]
+    const dx = touch.clientX - startRef.current.x
+    const dy = touch.clientY - startRef.current.y
+
+    // Lock direction after initial movement
+    if (!directionLocked.current) {
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        directionLocked.current = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical'
+      }
+    }
+
+    if (directionLocked.current !== 'horizontal') return
+
+    e.preventDefault()
+    const base = isOpen ? -ACTION_WIDTH : 0
+    const newOffset = Math.min(0, Math.max(-ACTION_WIDTH - 20, base + dx))
+    setOffsetX(newOffset)
+  }, [swiping, isOpen])
+
+  const handleTouchEnd = useCallback(() => {
+    setSwiping(false)
+    if (directionLocked.current !== 'horizontal') {
+      return
+    }
+
+    // Determine whether to open or close based on position
+    if (offsetX < -60) {
+      setOffsetX(-ACTION_WIDTH)
+      if (!isOpen) onOpen()
+    } else {
+      setOffsetX(0)
+      if (isOpen) onClose()
+    }
+  }, [offsetX, isOpen, onOpen, onClose])
+
+  // Close on tap when open
+  const handleContentClick = useCallback(() => {
+    if (isOpen) {
+      setOffsetX(0)
+      onClose()
+    }
+  }, [isOpen, onClose])
+
+  // Sync offset when externally closed
+  const prevIsOpen = useRef(isOpen)
+  if (prevIsOpen.current !== isOpen) {
+    prevIsOpen.current = isOpen
+    if (!isOpen && offsetX !== 0) {
+      setOffsetX(0)
+    }
+  }
+
+  return (
+    <div className="relative overflow-hidden">
+      {/* Action buttons behind */}
+      <div
+        className="absolute right-0 top-0 bottom-0 flex items-stretch"
+        style={{ width: ACTION_WIDTH }}
+      >
+        {confirmDelete ? (
+          <>
+            <button
+              onClick={onCancelConfirm}
+              className="flex-1 flex items-center justify-center text-[12px] font-semibold text-content-secondary
+                         bg-gray-100 active:bg-gray-200 transition-colors"
+            >
+              {cancelLabel}
+            </button>
+            <button
+              onClick={onConfirmDelete}
+              className="flex-1 flex items-center justify-center text-[12px] font-semibold text-white
+                         bg-red-600 active:bg-red-700 transition-colors"
+            >
+              {confirmLabel}
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={onEdit}
+              className="flex-1 flex items-center justify-center text-[12px] font-semibold text-white
+                         bg-cny-gold active:bg-amber-600 transition-colors"
+            >
+              {editLabel}
+            </button>
+            <button
+              onClick={onDelete}
+              className="flex-1 flex items-center justify-center text-[12px] font-semibold text-white
+                         bg-red-500 active:bg-red-600 transition-colors"
+            >
+              {deleteLabel}
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Sliding content */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onClick={handleContentClick}
+        className="relative bg-white"
+        style={{
+          transform: `translateX(${offsetX}px)`,
+          transition: swiping ? 'none' : 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// --- Dashboard Component ---
 export default function Dashboard({
   entries,
   totalAmount,
@@ -31,7 +183,7 @@ export default function Dashboard({
   const todayChor = getTodayChor()
   const todayTotal = todayEntries.reduce((s, e) => s + e.amount, 0)
   const [showAll, setShowAll] = useState(false)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [swipedId, setSwipedId] = useState<string | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [showRelativesCalc, setShowRelativesCalc] = useState(false)
@@ -47,15 +199,15 @@ export default function Dashboard({
 
   const displayEntries = showAll ? filteredEntries : filteredEntries.slice(0, 5)
 
-  const handleEntryTap = (id: string) => {
+  const handleSwipeOpen = (id: string) => {
     haptic()
-    if (expandedId === id) {
-      setExpandedId(null)
-      setConfirmId(null)
-    } else {
-      setExpandedId(id)
-      setConfirmId(null)
-    }
+    setSwipedId(id)
+    setConfirmId(null)
+  }
+
+  const handleSwipeClose = () => {
+    setSwipedId(null)
+    setConfirmId(null)
   }
 
   const handleDelete = (id: string) => {
@@ -63,7 +215,7 @@ export default function Dashboard({
     if (confirmId === id) {
       onDelete(id)
       setConfirmId(null)
-      setExpandedId(null)
+      setSwipedId(null)
     } else {
       setConfirmId(id)
     }
@@ -211,7 +363,7 @@ export default function Dashboard({
           </h3>
           {filteredEntries.length > 5 && (
             <button
-              onClick={() => { setShowAll(!showAll); setExpandedId(null); setConfirmId(null) }}
+              onClick={() => { setShowAll(!showAll); setSwipedId(null); setConfirmId(null) }}
               className="text-[12px] font-medium text-cny-red active:opacity-70 transition-opacity"
             >
               {showAll ? (language === 'en' ? 'Show less' : '收起') : t('dashboard.viewAll')}
@@ -246,18 +398,35 @@ export default function Dashboard({
             )}
           </div>
         )}
-        <div className="bg-white rounded-2xl border border-border divide-y divide-border">
+
+        {/* Swipe hint */}
+        {displayEntries.length > 0 && !swipedId && (
+          <p className="text-[10px] text-content-tertiary/50 text-right mb-1 font-medium">
+            {language === 'en' ? '← swipe to edit' : '← 滑动编辑'}
+          </p>
+        )}
+
+        <div className="bg-white rounded-2xl border border-border divide-y divide-border overflow-hidden">
           {displayEntries.map((entry) => {
             const cat = CATEGORIES.find(c => c.id === entry.category)
-            const isExpanded = expandedId === entry.id
-            const isConfirming = confirmId === entry.id
 
             return (
-              <div key={entry.id}>
-                <button
-                  onClick={() => handleEntryTap(entry.id)}
-                  className="w-full px-5 py-4 flex items-center gap-4 text-left active:bg-gray-50 transition-colors"
-                >
+              <SwipeableRow
+                key={entry.id}
+                isOpen={swipedId === entry.id}
+                onOpen={() => handleSwipeOpen(entry.id)}
+                onClose={handleSwipeClose}
+                onEdit={() => { onEdit(entry); setSwipedId(null) }}
+                onDelete={() => handleDelete(entry.id)}
+                confirmDelete={confirmId === entry.id}
+                onConfirmDelete={() => handleDelete(entry.id)}
+                onCancelConfirm={() => { setConfirmId(null); setSwipedId(null) }}
+                editLabel={t('dashboard.editEntry')}
+                deleteLabel={t('common.delete')}
+                confirmLabel={t('common.confirm')}
+                cancelLabel={t('common.cancel')}
+              >
+                <div className="px-5 py-4 flex items-center gap-4">
                   <span className="text-lg">{cat?.emoji ?? '🧧'}</span>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-[14px] text-content-primary truncate">{entry.from}</p>
@@ -273,42 +442,8 @@ export default function Dashboard({
                   <span className="text-[15px] font-semibold text-content-primary">
                     ${entry.amount}
                   </span>
-                </button>
-
-                {/* Edit / Delete action row */}
-                {isExpanded && (
-                  <div className="px-5 pb-4 flex items-center justify-end gap-2 animate-fade-in">
-                    {isConfirming && (
-                      <button
-                        onClick={() => { setConfirmId(null); setExpandedId(null) }}
-                        className="px-4 py-2 rounded-xl text-[12px] font-medium text-content-secondary
-                                   border border-border active:bg-gray-50 transition-colors"
-                      >
-                        {t('common.cancel')}
-                      </button>
-                    )}
-                    {!isConfirming && (
-                      <button
-                        onClick={() => { onEdit(entry); setExpandedId(null) }}
-                        className="px-4 py-2 rounded-xl text-[12px] font-medium text-cny-red border border-cny-red/25
-                                   active:bg-cny-red-50 transition-colors"
-                      >
-                        {t('dashboard.editEntry')}
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleDelete(entry.id)}
-                      className={`px-4 py-2 rounded-xl text-[12px] font-medium transition-colors ${
-                        isConfirming
-                          ? 'bg-red-600 text-white active:bg-red-700'
-                          : 'text-red-600 border border-red-200 active:bg-red-50'
-                      }`}
-                    >
-                      {isConfirming ? (t('common.confirm')) : t('common.delete')}
-                    </button>
-                  </div>
-                )}
-              </div>
+                </div>
+              </SwipeableRow>
             )
           })}
         </div>

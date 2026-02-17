@@ -58,7 +58,7 @@ export default function AddEntry({ recentContacts, onSave, onUpdate, editingEntr
     setTimeout(() => inputRef.current?.focus(), 100)
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const finalAmount = typeof amount === 'number' ? amount : 0
     if (finalAmount <= 0 || !from.trim()) return
 
@@ -74,6 +74,15 @@ export default function AddEntry({ recentContacts, onSave, onUpdate, editingEntr
     } else {
       onSave(finalAmount, from, category, chor, note.trim() || undefined)
     }
+
+    // Fire confetti for big angpao ($100+)
+    if (finalAmount >= 100) {
+      try {
+        const { fireConfetti } = await import('../utils/confetti')
+        fireConfetti()
+      } catch { /* confetti is non-critical */ }
+    }
+
     setSaved(true)
 
     setTimeout(() => {

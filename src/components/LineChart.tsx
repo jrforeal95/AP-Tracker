@@ -22,7 +22,7 @@ interface LineChartProps {
   totalAmount: number
 }
 
-export default function LineChartScreen({ dailyTotals, projection, dailyAverage, totalAmount }: LineChartProps) {
+export default function LineChartScreen({ dailyTotals, dailyAverage, totalAmount }: LineChartProps) {
   const { t, language } = useLanguage()
 
   const lastDataChor = useMemo(() => {
@@ -32,34 +32,32 @@ export default function LineChartScreen({ dailyTotals, projection, dailyAverage,
     return 0
   }, [dailyTotals])
 
+  const bestDay = useMemo(() => {
+    let max = 0
+    for (const d of dailyTotals) {
+      if (d.total > max) max = d.total
+    }
+    return max
+  }, [dailyTotals])
+
   const labels = dailyTotals.map(d =>
     language === 'zh' ? CHOR_LABELS_ZH[d.chor] : `C${d.chor}`
   )
 
-  const actualData = dailyTotals.map(d =>
-    d.chor <= lastDataChor ? d.cumulative : null
+  // Daily totals — show actual values for days up to lastDataChor
+  const dailyData = dailyTotals.map(d =>
+    d.chor <= lastDataChor ? d.total : null
   )
 
-  const projectionData = useMemo(() => {
-    if (lastDataChor === 0) return dailyTotals.map(() => null)
-    const lastCumulative = dailyTotals.find(d => d.chor === lastDataChor)?.cumulative ?? 0
-    const avgPerDay = lastDataChor > 0 ? lastCumulative / lastDataChor : 0
-
-    return dailyTotals.map(d => {
-      if (d.chor < lastDataChor) return null
-      if (d.chor === lastDataChor) return lastCumulative
-      return Math.round(lastCumulative + avgPerDay * (d.chor - lastDataChor))
-    })
-  }, [dailyTotals, lastDataChor])
-
+  // Daily average reference line
   const avgLine = dailyTotals.map(() => dailyAverage)
 
   const chartData = {
     labels,
     datasets: [
       {
-        label: t('chart.cumulative'),
-        data: actualData,
+        label: t('chart.daily'),
+        data: dailyData,
         borderColor: '#B91C1C',
         backgroundColor: 'rgba(185, 28, 28, 0.04)',
         borderWidth: 2.5,
@@ -73,23 +71,11 @@ export default function LineChartScreen({ dailyTotals, projection, dailyAverage,
         spanGaps: false,
       },
       {
-        label: t('chart.projection'),
-        data: projectionData,
-        borderColor: '#D97706',
-        borderWidth: 2,
-        borderDash: [6, 4],
-        pointRadius: 0,
-        pointHoverRadius: 3,
-        fill: false,
-        tension: 0.35,
-        spanGaps: true,
-      },
-      {
         label: t('chart.dailyAvg'),
         data: avgLine,
-        borderColor: 'rgba(14, 15, 12, 0.08)',
-        borderWidth: 1,
-        borderDash: [3, 3],
+        borderColor: 'rgba(217, 119, 6, 0.5)',
+        borderWidth: 1.5,
+        borderDash: [4, 4],
         pointRadius: 0,
         fill: false,
       },
@@ -137,6 +123,7 @@ export default function LineChartScreen({ dailyTotals, projection, dailyAverage,
           callback: (value: string | number) => `$${value}`,
         },
         border: { display: false },
+        beginAtZero: true,
       },
     },
   }
@@ -161,8 +148,8 @@ export default function LineChartScreen({ dailyTotals, projection, dailyAverage,
           <p className="text-[17px] font-bold text-content-primary mt-1 tracking-[-0.02em]">${totalAmount.toLocaleString()}</p>
         </div>
         <div className="bg-white rounded-2xl border border-border p-4 text-center">
-          <p className="text-[11px] text-content-tertiary font-medium">{t('chart.projection')}</p>
-          <p className="text-[17px] font-bold text-content-primary mt-1 tracking-[-0.02em]">${projection.toLocaleString()}</p>
+          <p className="text-[11px] text-content-tertiary font-medium">{t('chart.bestDay')}</p>
+          <p className="text-[17px] font-bold text-content-primary mt-1 tracking-[-0.02em]">${bestDay.toLocaleString()}</p>
         </div>
         <div className="bg-white rounded-2xl border border-border p-4 text-center">
           <p className="text-[11px] text-content-tertiary font-medium">{t('chart.dailyAvg')}</p>
@@ -179,11 +166,11 @@ export default function LineChartScreen({ dailyTotals, projection, dailyAverage,
         <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-border">
           <div className="flex items-center gap-2">
             <div className="w-4 h-[2px] bg-cny-red rounded-full" />
-            <span className="text-[11px] text-content-tertiary font-medium">{t('chart.cumulative')}</span>
+            <span className="text-[11px] text-content-tertiary font-medium">{t('chart.daily')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-[2px] rounded-full" style={{ borderTop: '2px dashed #D97706', height: 0 }} />
-            <span className="text-[11px] text-content-tertiary font-medium">{t('chart.projection')}</span>
+            <div className="w-4 h-[2px] rounded-full" style={{ borderTop: '2px dashed #D97706', height: 0, opacity: 0.5 }} />
+            <span className="text-[11px] text-content-tertiary font-medium">{t('chart.dailyAvg')}</span>
           </div>
         </div>
       </div>
